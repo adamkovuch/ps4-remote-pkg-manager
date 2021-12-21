@@ -1,0 +1,29 @@
+.container {
+    height: 100%;
+    display: flex;
+
+    & > .container-block {
+        margin: auto 0;
+        width: 100%;
+
+        & > div {
+            display: flex;
+        }
+    }
+}
+
+.error {
+    text-align: center;
+    width: 100%;
+    color: red;
+}
+
+mat-form-field {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+}
+
+.center {
+    margin: auto;
+}

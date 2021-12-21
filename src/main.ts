@@ -12,4 +12,7 @@ platformBrowserDynamic()
   .bootstrapModule(AppModule, {
     preserveWhitespaces: false
   })
+  .then(instance => window.addEventListener('beforeunload', (e) => {
+    instance.destroy();
+  }))
   .catch(err => console.error(err));

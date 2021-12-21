@@ -1,0 +1,25 @@
+<form [formGroup]="settingForm" (submit)="submit()">
+    <h2 mat-dialog-title>Settings</h2>
+    <mat-dialog-content class="mat-typography">
+        <mat-form-field>
+            <mat-label>Interface</mat-label>
+            <mat-select formControlName="interface" required>
+                <mat-option *ngFor="let interface of interfaces" [value]="interface">
+                  {{interface}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Torrent cache path</mat-label>
+            <input #addressInput matInput type="text" formControlName="torrentPath">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Http server port</mat-label>
+            <input #addressInput matInput type="number" min="1" max="65535" formControlName="httpPort" required>
+        </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">Cancel</button>
+    <button mat-button cdkFocusInitial type="submit">OK</button>
+    </mat-dialog-actions>
+</form>

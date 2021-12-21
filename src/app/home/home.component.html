@@ -1,7 +1,10 @@
-<div class="container">
-  <h1 class="title">
-    {{ 'PAGES.HOME.TITLE' | translate }}
-  </h1>
-
-  <a routerLink="/detail">{{ 'PAGES.HOME.GO_TO_DETAIL' | translate }}</a>
+<app-home-status-toolbar></app-home-status-toolbar>
+<div class="tool-buttons">
+    <button mat-raised-button (click)="addFile()">Add File</button>
+    <button mat-raised-button>Add Direct Link</button>
+    <button mat-raised-button>Add Torrent</button>
+    <button mat-raised-button>Add Magnet URI</button>
+</div>
+<div class="data-list">
+    <app-home-data-list></app-home-data-list>
 </div>

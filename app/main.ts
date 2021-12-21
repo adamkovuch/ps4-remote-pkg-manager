@@ -1,4 +1,5 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, dialog, Menu, screen } from 'electron';
+import * as remote from "@electron/remote/main";
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
@@ -8,28 +9,32 @@ const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
 
 function createWindow(): BrowserWindow {
-
-  const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
-
   // Create the browser window.
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: size.width,
-    height: size.height,
+    width: 640,
+    height: 600,
+    minWidth: 640,
+    minHeight: 600,
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
-      contextIsolation: false,  // false if you want to run e2e test with Spectron
+      contextIsolation: false,  // false if you want to run e2e test with Spectron,
     },
   });
 
+  Menu.setApplicationMenu(null);
+
+  remote.initialize();
+  remote.enable(win.webContents);
+
+  let allowClose = false;
 
   if (serve) {
     win.webContents.openDevTools();
     require('electron-reload')(__dirname, {
-      electron: require(path.join(__dirname, '/../node_modules/electron'))
+      electron: require(path.join(__dirname, '/../node_modules/electron')),
     });
     win.loadURL('http://localhost:4200');
   } else {
@@ -47,7 +52,23 @@ function createWindow(): BrowserWindow {
       slashes: true
     }));
   }
+  win.on('close', async (e) => {
+    if(!allowClose) {
+      e.preventDefault();
 
+      const { response } = await dialog.showMessageBox(win, {
+        type: 'question',
+        title: '  Confirm  ',
+        message: 'Are you sure that you want to close this window?',
+        buttons: ['Yes', 'No'],
+      });
+  
+      if (response === 0) {
+        allowClose = true;
+        app.quit();
+      }
+    }
+  })
   // Emitted when the window is closed.
   win.on('closed', () => {
     // Dereference the window object, usually you would store window
