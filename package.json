@@ -6,10 +6,11 @@
   "main": "app/main.js",
   "private": true,
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "electron-builder install-app-deps && cd test_ps4_server && npm install && cd ..",
     "ng": "ng",
     "start": "npm-run-all -p electron:serve ng:serve",
-    "build": "npm run electron:serve-tsc && ng build --base-href ./",
+    "start:test-ps4": "cd test_ps4_server && npm start",
+    "build": "npm run electron:build",
     "build:dev": "npm run build -- -c dev",
     "build:prod": "npm run build -- -c production",
     "ng:serve": "ng serve -c web -o",

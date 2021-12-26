@@ -131,6 +131,12 @@ E2E Test scripts can be found in `e2e` folder.
 Note: To make it work behind a proxy, you can add this proxy exception in your terminal  
 `export {no_proxy,NO_PROXY}="127.0.0.1,localhost"`
 
+## Manual Testing 
+
+Before starting manual testing you need to build electron app bundle. To do it, need to run `npm run build`. After that app bundle should be placed in `release` folder.
+
+To start virtual ps4 server, you need to run `npm run start:test-ps4`. The server will help to handle app requests.
+
 ## Debug with VsCode
 
 [VsCode](https://code.visualstudio.com/) debug configuration is available! In order to use it, you need the extension [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome).
