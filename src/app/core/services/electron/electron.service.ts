@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 // If you import a module but never use any of the imported values other than as TypeScript types,
 // the resulting javascript file will look as if you never imported the module at all.
-import { ipcRenderer, webFrame, shell, dialog } from 'electron';
+import { ipcRenderer, webFrame, shell, dialog, App, BrowserWindow } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as webtorrent from 'webtorrent';
@@ -10,7 +10,6 @@ import * as express from 'express';
 import * as http from 'http';
 import * as os from 'os';
 import * as parseTorrent from 'parse-torrent';
-import * as mime from 'mime';
 import * as pump from 'pump';
 import * as rangeParser from 'range-parser';
 
@@ -18,6 +17,8 @@ import * as rangeParser from 'range-parser';
   providedIn: 'root'
 })
 export class ElectronService {
+  appDataPath: string;
+
   ipcRenderer: typeof ipcRenderer;
   webFrame: typeof webFrame;
   childProcess: typeof childProcess;
@@ -47,12 +48,19 @@ export class ElectronService {
       this.http = window.require('http');
       this.os = window.require('os');
       this.dialog = window.require('@electron/remote').dialog;
+
       this.parseTorrent = window.require('parse-torrent');
       this.webTorrentLib = window.require('webtorrent');
 
       this.mime = window.require('mime');
       this.pump = window.require('pump');
       this.rangeParser = window.require('range-parser');
+
+      this.ipcRenderer.once('asynchronous-message', (evt, messageObj) => {
+        this.appDataPath = messageObj.appDataPath;
+      });
+
+      this.ipcRenderer.send('asynchronous-message', 'getAppSettings');
       // Notes :
       // * A NodeJS's dependency imported with 'window.require' MUST BE present in `dependencies` of both `app/package.json`
       // and `package.json (root folder)` in order to make it work here in Electron's Renderer process (src folder)

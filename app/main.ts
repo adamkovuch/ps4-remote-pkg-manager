@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, Menu, screen } from 'electron';
+import { app, BrowserWindow, dialog, Menu, ipcMain } from 'electron';
 import * as remote from "@electron/remote/main";
 import * as path from 'path';
 import * as fs from 'fs';
@@ -103,6 +103,15 @@ try {
       createWindow();
     }
   });
+
+  ipcMain.on('asynchronous-message', function (evt, messageObj) {
+    // Send message back to renderer.
+    if (messageObj === 'getAppSettings') {
+        evt.sender.send('asynchronous-message', {
+          appDataPath: path.join(app.getPath('appData'), app.getName()),
+        });
+    }
+});
 
 } catch (e) {
   // Catch Error

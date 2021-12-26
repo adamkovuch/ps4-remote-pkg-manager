@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ElectronService } from '../../core/services';
 import { AppSettings } from '../models/app-settings';
-import * as fs from 'fs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +10,7 @@ export class AppSettingsService {
     return this.loadedSettings;
   }
 
-  private readonly filename = 'config.json';
+  private readonly storageKey = 'appSettings';
 
   private loadedSettings: AppSettings = {
     connection: {
@@ -24,24 +22,20 @@ export class AppSettingsService {
     lastIp: null,
   };
 
-  private fsInstance: typeof fs;
+  constructor() { 
+    const rawSettings = localStorage.getItem(this.storageKey);
 
-  constructor(electronService: ElectronService) { 
-    if(electronService.isElectron) {
-      this.fsInstance = electronService.fs;
-      if(this.hasSettings()) {
-        const rawData = this.fsInstance.readFileSync(this.filename, 'utf8');
-        this.loadedSettings = JSON.parse(rawData);
-      }
+    if(rawSettings) {
+      this.loadedSettings = JSON.parse(rawSettings);
     }
   }
 
   setSettings(settings: AppSettings) {
     this.loadedSettings = settings;
-    this.fsInstance?.writeFile(this.filename, JSON.stringify(settings), () => {});
+    localStorage.setItem(this.storageKey, JSON.stringify(settings));
   }
 
   hasSettings() {
-    return this.fsInstance?.existsSync(this.filename)
+    return !!localStorage.getItem(this.storageKey);
   }
 }
