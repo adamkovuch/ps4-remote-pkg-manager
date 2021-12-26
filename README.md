@@ -133,7 +133,7 @@ Note: To make it work behind a proxy, you can add this proxy exception in your t
 
 ## Manual Testing 
 
-Before starting manual testing you need to build electron app bundle. To do it, need to run `npm run build`. After that app bundle should be placed in `release` folder.
+Before starting manual testing you need to build electron app bundle. To do it, need to run `npm run electron:build:<os type>`. `<os type>` can be `win`, `linux`, `mac`. After that app bundle should be placed in `release` folder.
 
 To start virtual ps4 server, you need to run `npm run start:test-ps4`. The server will help to handle app requests.
 
