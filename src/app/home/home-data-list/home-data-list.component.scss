@@ -1,3 +1,50 @@
+.table-container {
+    width: 100%;
+    height: calc(100vh - 160px);
+    overflow: auto;
+    background: #ffffff26;
+    color: white;
+
+    table td {
+        padding-right: 20px;
+        &:first-of-type {
+            padding-left: 24px;
+        }
+        &:last-of-type {
+            padding-right: 24px;
+        }
+    }
+}
+  
 table {
     width: 100%;
+    background: #ffffff26;
+}
+
+.no-items {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.menu {
+    text-align: right;
+
+    mat-icon {
+        color: rgba(0,0,0,.54);
+        cursor: pointer;
+    }
+}
+
+.send {
+    text-align: center;
+}
+
+button {
+    mat-icon {
+        font-size: 20px;
+    }
+}
+
+.torrent-tooltip {
+    white-space: pre-line;
 }

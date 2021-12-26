@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { first, fromEvent, of, Subject, takeUntil } from 'rxjs';
+import { first, fromEvent, of, Subject, Subscription, takeUntil } from 'rxjs';
 import { ElectronService } from '../../core/services';
 
 export interface BrowseFileOptions {
@@ -13,7 +13,7 @@ export interface BrowseFileOptions {
 export class BrowseFileService implements OnDestroy {
   private readonly inputElement: HTMLInputElement;
   private destroyed$ = new Subject<void>();
-  private fileSelected$: Subject<File[]>;
+  private sub: Subscription;
 
   constructor() {
     this.inputElement = document.createElement('input');
@@ -21,10 +21,6 @@ export class BrowseFileService implements OnDestroy {
     this.inputElement.setAttribute('style', 'display: none');
 
     document.body.appendChild(this.inputElement);
-
-    fromEvent(this.inputElement, 'change').pipe(
-      takeUntil(this.destroyed$)
-    ).subscribe((ev: any) => this.fileSelected$?.next(this.toArray(ev.target.files)));
   }
 
   ngOnDestroy(): void {
@@ -33,20 +29,20 @@ export class BrowseFileService implements OnDestroy {
   }
 
   open(options?: BrowseFileOptions) {
+    this.sub?.unsubscribe();
+    this.inputElement.value = '';
+
     options?.multiple ? this.inputElement.setAttribute('multiple', '') : this.inputElement.removeAttribute('multiple');
     options?.accept ? this.inputElement.setAttribute('accept', options?.accept.join(', ')) : this.inputElement.removeAttribute('accept');
-    this.fileSelected$ = new Subject();
+    const fileSelected$ = new Subject<File[]>()
+
+    this.sub = fromEvent(this.inputElement, 'change').pipe(
+      first(),
+      takeUntil(this.destroyed$)
+    ).subscribe((ev: any) => fileSelected$?.next(Array.from(ev.target.files)));
     
     this.inputElement.click();
 
-    return this.fileSelected$.asObservable().pipe(first());
-  }
-
-  private toArray(files: FileList) {
-    const result: File[] = [];
-    for(let i = 0; i < files.length; i += 1) {
-      result.push(files.item(i));
-    }
-    return result;
+    return fileSelected$.asObservable().pipe(first());
   }
 }

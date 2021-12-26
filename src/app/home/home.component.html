@@ -1,10 +1,18 @@
 <app-home-status-toolbar></app-home-status-toolbar>
 <div class="tool-buttons">
-    <button mat-raised-button (click)="addFile()">Add File</button>
-    <button mat-raised-button>Add Direct Link</button>
-    <button mat-raised-button>Add Torrent</button>
-    <button mat-raised-button>Add Magnet URI</button>
+    <button mat-raised-button (click)="addFile()"><mat-icon>upload_file</mat-icon> File</button>
+    <button mat-raised-button (click)="addDirectLink()"><mat-icon>add_link</mat-icon> Add Direct Link</button>
+    <button mat-raised-button (click)="addTorrent()"><mat-icon>file_upload</mat-icon> Add Torrent</button>
+    <button mat-raised-button (click)="addMagnetUri()"><mat-icon>cloud_upload</mat-icon> Add Magnet URI</button>
 </div>
 <div class="data-list">
-    <app-home-data-list></app-home-data-list>
+    <app-home-data-list 
+        [dataSource$]="dataListService.dataSourceList$" 
+        (openLink)="openLink($event)" 
+        (forceDownload)="forceDownload($event)"
+        (send)="sendToPs4($event)"
+        (delete)="delete($event)"></app-home-data-list>
+</div>
+<div class="fullscreen" *ngIf="loading$ | async">
+    <app-loading></app-loading>
 </div>

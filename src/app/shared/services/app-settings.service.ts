@@ -7,11 +7,17 @@ import * as fs from 'fs';
   providedIn: 'root'
 })
 export class AppSettingsService {
+
+  get settings() {
+    return this.loadedSettings;
+  }
+
   private readonly filename = 'config.json';
 
   private loadedSettings: AppSettings = {
     connection: {
       httpPort: 8081,
+      torrentPort: 9090,
       interface: null,
       torrentPath: null
     },
@@ -28,10 +34,6 @@ export class AppSettingsService {
         this.loadedSettings = JSON.parse(rawData);
       }
     }
-  }
-
-  getSettings(): AppSettings {
-    return this.loadedSettings;
   }
 
   setSettings(settings: AppSettings) {

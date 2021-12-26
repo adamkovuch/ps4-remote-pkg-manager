@@ -1,3 +1,18 @@
 mat-form-field {
     width: 100%;
 }
+
+.flex {
+    display: flex;
+    align-items: baseline;
+}
+
+h2 {
+    color: white;
+}
+
+button {
+    mat-icon {
+        font-size: 20px;
+    }
+}

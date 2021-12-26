@@ -18,10 +18,14 @@ export class ConnectComponent implements OnInit, OnDestroy, AfterViewInit {
     address: new FormControl('', [this.ipValidation.bind(this)])
   });
 
-  error$ = new BehaviorSubject(false);
+  loading$ = new BehaviorSubject(false);
+
+  get ipAddressControl() {
+    return this.form.get('address');
+  }
 
   get ipAddress() {
-    return this.form.get('address')?.value;
+    return this.ipAddressControl?.value;
   }
 
   private destroyed$ = new Subject<void>();
@@ -46,29 +50,31 @@ export class ConnectComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const lastIp = this.appSettingsService.getSettings().lastIp;
+    const lastIp = this.appSettingsService.settings.lastIp;
     if(lastIp) {
       const addressControl = this.form.get('address');
-      addressControl.setValue(lastIp);
+      setTimeout(() => addressControl.setValue(lastIp), 0);
     }
   }
 
   submit() {
-    if(this.form.invalid) return;
+    if(this.ipAddressControl.errors?.required || this.ipAddressControl.errors?.invalid) return;
+    this.loading$.next(true);
 
-    this.form.disable();
     this.ps4RemoteService.ping(this.ipAddress).pipe(
-      finalize(() => this.form.enable()),
+      finalize(() => {
+        this.loading$.next(false);
+      }),
       takeUntil(this.destroyed$),
     ).subscribe(result => {
       if(result) {
         this.ps4RemoteService.connect(this.ipAddress);
-        const settings = this.appSettingsService.getSettings();
+        const settings = this.appSettingsService.settings;
         settings.lastIp = this.ipAddress;
         this.appSettingsService.setSettings(settings);
         this.redirectIfConnected();
       } else {
-        this.error$.next(true);
+        this.ipAddressControl.setErrors({notConnected: true});
       }
     })
   }

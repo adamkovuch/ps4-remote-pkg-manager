@@ -18,12 +18,13 @@ export class SettingsComponent implements OnInit {
     interface: new FormControl(''),
     httpPort: new FormControl(''),
     torrentPath: new FormControl(''),
+    torrentPort: new FormControl(''),
   });
 
   private loadedSettings: AppSettings;
 
   constructor(
-    electronService: ElectronService, 
+    private electronService: ElectronService, 
     private dialogRef: MatDialogRef<SettingsComponent>,
     private appSettingsService: AppSettingsService) { 
     const interfaces = electronService.os?.networkInterfaces();
@@ -44,7 +45,7 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadedSettings = this.appSettingsService.getSettings();
+    this.loadedSettings = this.appSettingsService.settings;
     this.settingForm.setValue(this.loadedSettings.connection);
   }
 
@@ -53,6 +54,14 @@ export class SettingsComponent implements OnInit {
       this.loadedSettings.connection = this.settingForm.value;
       this.appSettingsService.setSettings(this.loadedSettings);
       this.dialogRef.close(true);
+    }
+  }
+
+  browseFolder() {
+    if(this.electronService.isElectron) {
+      this.electronService.dialog.showOpenDialog({ properties: ['openDirectory'] }).then(folderPath => {
+        this.settingForm.get('torrentPath')?.setValue(folderPath.filePaths[0]);
+      })
     }
   }
 }

@@ -5,8 +5,81 @@ html, body {
 
   height: 100%;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow: hidden;
 }
 
 .cdk-global-scrollblock {
   overflow-y: hidden;
+}
+
+body {
+  background-image: url('./assets/images/background.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+// Material
+
+.mat-toolbar.mat-primary {
+  background: #ffffffd1;
+  color: #000;
+}
+
+button.mat-raised-button.mat-primary {
+  background-color: #4CAF50;
+}
+
+.mat-form-field {
+  color: white;
+
+  label.mat-form-field-label {
+    color: white;
+  }
+
+  .mat-form-field-underline {
+    background-color: rgb(255 255 255 / 42%);
+  }
+
+  .mat-select-arrow {
+    color: rgb(255 255 255 / 54%);
+  }
+
+  &.mat-focused {
+    label.mat-form-field-label {
+      color: #4CAF50;
+    }
+    .mat-form-field-ripple {
+      background-color: #4caf5080;
+    }
+    &.mat-primary {
+      .mat-select-arrow {
+        color: #4caf5080;
+      }
+    }
+  }
+}
+
+.mat-dialog-container {
+  background-image: url(./assets/images/background.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
+}
+
+.mat-button {
+  color: white;
+}
+
+.fullscreen {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background: rgb(0 0 0 / 71%);
+  display: flex;
+
+  & > app-loading {
+      margin: auto;
+  }
 }

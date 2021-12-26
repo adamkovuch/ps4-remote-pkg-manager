@@ -21,6 +21,7 @@ function createWindow(): BrowserWindow {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
       contextIsolation: false,  // false if you want to run e2e test with Spectron,
+      webSecurity: false,
     },
   });
 
@@ -59,7 +60,7 @@ function createWindow(): BrowserWindow {
       const { response } = await dialog.showMessageBox(win, {
         type: 'question',
         title: '  Confirm  ',
-        message: 'Are you sure that you want to close this window?',
+        message: 'Are you sure that you want to close this window? This action will stop downloading on your PS4',
         buttons: ['Yes', 'No'],
       });
   

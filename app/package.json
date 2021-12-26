@@ -9,6 +9,10 @@
     "@electron/remote": "^2.0.1",
     "electron-config": "^2.0.0",
     "express": "^4.17.2",
+    "mime": "^3.0.0",
+    "parse-torrent": "^9.1.4",
+    "pump": "^3.0.0",
+    "range-parser": "^1.2.1",
     "webtorrent": "^1.5.8"
   },
   "devDependencies": {

@@ -10,6 +10,7 @@ import { NgxMaskModule } from 'ngx-mask';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SettingsComponent } from '../settings/settings.component';
 import { MatSelectModule } from '@angular/material/select';
+import { SharedModule } from '../shared/shared.module';
 
 
 
@@ -29,6 +30,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatSelectModule,
     NgxMaskModule.forRoot(),
     ReactiveFormsModule,
+    SharedModule,
   ]
 })
 export class ConnectModule { }

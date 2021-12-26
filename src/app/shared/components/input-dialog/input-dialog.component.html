@@ -1,1 +1,12 @@
-<p>input-dialog works!</p>
+<h2 mat-dialog-title *ngIf="title">{{ title }}</h2>
+<mat-dialog-content class="mat-typography">
+    {{ text }}
+    <mat-form-field>
+        <mat-label *ngIf="placeholder">{{placeholder}}</mat-label>
+        <input #addressInput matInput type="text" [formControl]="valueControl" required>
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="null">{{ cancelButton }}</button>
+  <button mat-button [mat-dialog-close]="valueControl.value" cdkFocusInitial [disabled]="valueControl.invalid">{{ okButton }}</button>
+</mat-dialog-actions>

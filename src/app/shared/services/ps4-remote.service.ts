@@ -1,5 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, delay, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, catchError, delay, map, Observable, of, ReplaySubject, timeout } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class Ps4RemoteService {
 
   private _ip: string;
 
-  constructor() {
+  constructor(private http: HttpClient) {
   }
 
   connect(ip: string) {
@@ -27,6 +28,20 @@ export class Ps4RemoteService {
   }
 
   ping(ip: string) {
-    return of(true);
+    return this.http.post(`http://${ip}:12800/api/is_exists`, {title_id: 'CUSA09311' }).pipe(
+      map(() => true),
+      timeout(5000),
+      catchError(() => of(false)),
+    );
+  }
+
+  install(urls: string[]) {
+    return this.http.post<any>(`http://${this._ip}:12800/api/install`, {
+      type: 'direct',
+      packages: urls,
+    }).pipe(
+      map(response => response.status === 'success'),
+      timeout(5000),
+    );
   }
 }

@@ -9,13 +9,22 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field>
-            <mat-label>Torrent cache path</mat-label>
-            <input #addressInput matInput type="text" formControlName="torrentPath">
-        </mat-form-field>
+        <div class="flex">
+            <mat-form-field>
+                <mat-label>Torrent cache path</mat-label>
+                <input #addressInput matInput type="text" formControlName="torrentPath">
+            </mat-form-field>
+            <div>
+                <button mat-button type="button" (click)="browseFolder()"><mat-icon>folder</mat-icon> Browse</button>
+            </div>
+        </div>
         <mat-form-field>
             <mat-label>Http server port</mat-label>
             <input #addressInput matInput type="number" min="1" max="65535" formControlName="httpPort" required>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Torrent http server port</mat-label>
+            <input #addressInput matInput type="number" min="1" max="65535" formControlName="torrentPort" required>
         </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions align="end">

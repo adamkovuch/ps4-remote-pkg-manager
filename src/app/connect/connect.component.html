@@ -4,17 +4,18 @@
             <mat-form-field>
                 <mat-label>PS4 Ip Address</mat-label>
                 <input #addressInput matInput type="text" formControlName="address" mask="IP" [dropSpecialCharacters]="false" [validation]="true" required>
-                <mat-error *ngIf="(error$ | async) === false; else connectError">Invalid IP Address</mat-error>
-                <ng-template #connectError>
-                    <mat-error >Incorrect IP Address or Remote Install Package app isn't run</mat-error>
-                </ng-template>
+                <mat-error *ngIf="ipAddressControl.errors?.invalid">Invalid IP Address</mat-error>
+                <mat-error *ngIf="ipAddressControl.errors?.notConnected">Incorrect IP Address or Remote Install Package app isn't run</mat-error>
             </mat-form-field>
         </div>
         <div>
             <div class="center">
-                <button mat-button (click)="openSettings()">Settings</button>
+                <button type="button" mat-button (click)="openSettings()">Settings</button>
                 <button type="submit" mat-raised-button [color]="'primary'"><mat-icon>link</mat-icon> Connect</button>
             </div>
         </div>
     </form>
+</div>
+<div class="fullscreen" *ngIf="loading$ | async">
+    <app-loading></app-loading>
 </div>

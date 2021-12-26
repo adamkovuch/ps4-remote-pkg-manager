@@ -1,8 +1,8 @@
-<h2 mat-dialog-title>Install Angular</h2>
+<h2 mat-dialog-title *ngIf="title">{{ title }}</h2>
 <mat-dialog-content class="mat-typography">
-    <p>test test test</p>
+    {{ text }}
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button [mat-dialog-close]="false">Cancel</button>
-  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Install</button>
+  <button mat-button [mat-dialog-close]="false" *ngIf="cancelButton">{{ cancelButton }}</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial *ngIf="okButton">{{ okButton }}</button>
 </mat-dialog-actions>
