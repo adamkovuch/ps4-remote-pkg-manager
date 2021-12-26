@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 function processRequest(req, res) {
     console.log(`REQUEST: ${req.path}`);
     console.log(`DATA: ${JSON.stringify(req.body)}`);
-    res.sendStatus(200);
+    res.status(200).send({status: 'success'});
 }
 
 

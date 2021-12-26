@@ -11,11 +11,9 @@ const args = process.argv.slice(1),
 function createWindow(): BrowserWindow {
   // Create the browser window.
   win = new BrowserWindow({
-    x: 0,
-    y: 0,
-    width: 640,
+    width: 670,
     height: 600,
-    minWidth: 640,
+    minWidth: 670,
     minHeight: 600,
     webPreferences: {
       nodeIntegration: true,
@@ -24,6 +22,7 @@ function createWindow(): BrowserWindow {
       webSecurity: false,
     },
   });
+  win.center();
 
   Menu.setApplicationMenu(null);
 
