@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoadingComponent } from './components/loading/loading.component';
 import { MatButtonModule } from '@angular/material/button';
+import { DragDropDirective } from './directives/drag-drop.directive';
 
 
 
@@ -18,7 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
     ConfirmDialogComponent, 
     InputDialogComponent, 
     TorrentFileSelectComponent, 
-    LoadingComponent,
+    LoadingComponent, 
+    DragDropDirective,
   ],
   imports: [
     CommonModule,
@@ -34,7 +36,8 @@ import { MatButtonModule } from '@angular/material/button';
     ConfirmDialogComponent, 
     InputDialogComponent, 
     TorrentFileSelectComponent,
-    LoadingComponent
+    LoadingComponent,
+    DragDropDirective,
   ]
 })
 export class SharedModule { }

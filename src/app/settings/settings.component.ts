@@ -18,7 +18,6 @@ export class SettingsComponent implements OnInit {
     interface: new FormControl(''),
     httpPort: new FormControl(''),
     torrentPath: new FormControl(''),
-    torrentPort: new FormControl(''),
   });
 
   private loadedSettings: AppSettings;

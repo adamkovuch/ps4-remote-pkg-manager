@@ -22,10 +22,6 @@
             <mat-label>Http server port</mat-label>
             <input #addressInput matInput type="number" min="1" max="65535" formControlName="httpPort" required>
         </mat-form-field>
-        <mat-form-field>
-            <mat-label>Torrent http server port</mat-label>
-            <input #addressInput matInput type="number" min="1" max="65535" formControlName="torrentPort" required>
-        </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
     <button mat-button [mat-dialog-close]="false">Cancel</button>

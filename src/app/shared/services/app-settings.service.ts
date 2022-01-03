@@ -15,7 +15,6 @@ export class AppSettingsService {
   private loadedSettings: AppSettings = {
     connection: {
       httpPort: 8081,
-      torrentPort: 9090,
       interface: null,
       torrentPath: null
     },

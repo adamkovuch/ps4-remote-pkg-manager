@@ -4,13 +4,9 @@ import { ElectronService } from '../../core/services';
 import { AppSettingsService } from './app-settings.service';
 
 import * as express from 'express';
-import { Server } from 'http';
 import { ErrorHandlerService } from './error-handler.service';
 import { Observable } from 'rxjs';
-import { WebTorrent } from "webtorrent";
-import { SharedServer } from './shared-server';
-
-import { Ranges } from "range-parser";
+import { HttpServerService } from './http-server.service';
 
 interface TorrentInfo {
   url: string;
@@ -31,38 +27,21 @@ interface TorrentBinding {
 @Injectable({
   providedIn: 'root'
 })
-export class TorrentService extends SharedServer implements OnDestroy {
-  protected get port(): number {
-    return this.appSettings.settings.connection.torrentPort;
-  }
-  protected get inteface(): string {
-    return this.appSettings.settings.connection.interface;
-  }
-
+export class TorrentService implements OnDestroy {
   private client?: Instance;
-  private app?: express.Application;
 
   private torrents: TorrentBinding[] = [];
 
   constructor(
     private electronService: ElectronService,
     private appSettings: AppSettingsService,
-    private errorHandler: ErrorHandlerService) {
+    private errorHandler: ErrorHandlerService,
+    private httpServerService: HttpServerService) {
 
-    super();
-    this.app = electronService.express?.();
-    this.server = electronService.http?.createServer(this.app);
-
-    this.server?.on('error', (err) =>
-      this.errorHandler.handle('Unable to create http torrent server. Please check the app settings', err)
-    );
     this.client = electronService.webTorrentLib && new electronService.webTorrentLib();
-
-    this.initServer();
   }
 
   ngOnDestroy(): void {
-    this.server?.close();
     this.client?.destroy();
   }
 
@@ -88,22 +67,11 @@ export class TorrentService extends SharedServer implements OnDestroy {
           ob.next(existTorrent);
           ob.complete();
         } else {
-          try {
-            this.client?.add(torrentId, { path: this.appSettings.settings.connection.torrentPath }, torrent => {
-              /*const s = torrent.createServer();
-              s.listen(this.appSettings.settings.connection.torrentPort, this.appSettings.settings.connection.interface);
-              s.on('request', (req) => {
-                console.log(`Path: ${req.url}`);
-                console.log(`Headers: ${JSON.stringify(req.headers)}`);
-              });*/
-              torrent.files.forEach(file => file.deselect());
-              //torrent.deselect(0, torrent.pieces.length - 1, 0);
-              ob.next(torrent);
-              ob.complete();
-            });
-          } catch (err) {
-            console.log('my error');
-          }
+          this.client?.add(torrentId, { path: this.appSettings.settings.connection.torrentPath }, torrent => {
+            torrent.files.forEach(file => file.deselect());
+            ob.next(torrent);
+            ob.complete();
+          });
         }
       })
 
@@ -115,16 +83,14 @@ export class TorrentService extends SharedServer implements OnDestroy {
 
     torrent.files.forEach((file: TorrentFile) => {
       if (filenames.find(name => name === file.name)) {
-        const path = `/${torrent.infoHash}/${file.name}`;
-        this.app.get(path, (req, res) =>
-          this.handleRequest(file, req, res)
-        );
+        const path = `/torrent/${torrent.infoHash}/${file.name}`;
+        const url = this.httpServerService.addGetRoute(path, (req, res) => this.handleRequest(file, req, res));
         files.push({
-          url: this.getFileUrl(torrent.infoHash, file.name),
+          url: url,
           file: file,
         });
         this.forceDownload(torrent, file);
-        console.log(`created: ${this.getFileUrl(torrent.infoHash, file.name)}`);
+        console.log(`created: ${url}`);
       }
     });
 
@@ -140,9 +106,7 @@ export class TorrentService extends SharedServer implements OnDestroy {
   }
 
   deleteTorrentFile(filename: string, torrent: Torrent, torrentFile: TorrentFile) {
-    this.app.get(`/${torrent.infoHash}/${filename}`, (req, res) =>
-      res.status(404).send('not found')
-    );
+    this.httpServerService.removeGetRoute(`/torrent/${torrent.infoHash}/${filename}`)
     torrentFile.deselect();
     const params = { delete: false };
     this.torrents.forEach(torrent => {
@@ -164,13 +128,20 @@ export class TorrentService extends SharedServer implements OnDestroy {
     this.torrents.splice(index, 1);
   }
 
-  forceDownload(torrent: Torrent, file: TorrentFile) {
+  forceDownload(torrent: Torrent, file?: TorrentFile) {
     // Deselect all files on initial download
     torrent.files.forEach(file => file.deselect());
     torrent.deselect(0, torrent.pieces.length - 1, 0);
 
-    // Select file with provided index
-    torrent.select((file as any)._startPiece, (file as any)._endPiece, 0); // workaround
+    if(!file) {
+      const torrentInfo = this.torrents.find(t => t.instance === torrent);
+      file = torrentInfo.selectedFiles.find(f => f.torrentFile.progress < 1)?.torrentFile;
+    }
+
+    if(file) {
+      // Select file with provided index
+      torrent.select((file as any)._startPiece, (file as any)._endPiece, 0); // workaround
+    }
   }
 
   private handleRequest(file: TorrentFile, req: express.Request, res: express.Response) {
@@ -221,20 +192,6 @@ export class TorrentService extends SharedServer implements OnDestroy {
         fileInfo.streams.push(stream);
       }
     });
-  }
-
-  private initServer() {
-    this.app?.get('', (req, res) => {
-      const body = this.client.torrents.map(torrent => {
-        const links = torrent.files.map(file => `<div><a href="${this.getFileUrl(torrent.infoHash, file.name)}">${file.name}</a></div>`)
-        return `<div><h2>${torrent.name}<h2>${links.join('')}</div><br /><br/>`;
-      }).join();
-      res.status(200).send(body);
-    });
-  }
-
-  private getFileUrl(infoHash: string, filename: string) {
-    return `http://${this.appSettings.settings.connection.interface}:${this.appSettings.settings.connection.torrentPort}/${infoHash}/${filename}`;
   }
 
   private encodeRFC5987(str) {
