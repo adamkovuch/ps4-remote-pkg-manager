@@ -11,6 +11,7 @@
         (openLink)="openLink($event)" 
         (forceDownload)="forceDownload($event)"
         (send)="sendToPs4($event)"
+        (pkgInfo)="pkgInfo($event)"
         (delete)="delete($event)"></app-home-data-list>
 </div>
 <div class="fullscreen" *ngIf="loading$ | async">

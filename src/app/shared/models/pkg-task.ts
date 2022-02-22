@@ -11,6 +11,7 @@ export interface PkgTask {
     name: string;
     source: PkgTaskSource;
     link: string;
+    filePath?: string;
     size?: string;
     torrentData?: {
         torrent: Torrent;

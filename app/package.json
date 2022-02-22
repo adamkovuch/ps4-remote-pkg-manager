@@ -1,7 +1,7 @@
 {
   "name": "ps4-remote-pkg-manager",
   "description": "The application allows to send pkg & torrent stream",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "main.js",
   "private": true,
   "author": "adamkovuch@gmail.com",
@@ -9,6 +9,7 @@
     "@electron/remote": "^2.0.4",
     "electron-config": "^2.0.0",
     "express": "^4.17.2",
+    "fs-readstream-seek": "^1.1.1",
     "mime": "^3.0.0",
     "parse-torrent": "^9.1.4",
     "pump": "^3.0.0",

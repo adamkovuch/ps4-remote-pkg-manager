@@ -25,6 +25,9 @@ export class HomeDataListComponent{
   @Output()
   send = new EventEmitter<PkgTask>();
 
+  @Output()
+  pkgInfo = new EventEmitter<PkgTask>();
+
   displayedColumns = [
     "name",
     "source",

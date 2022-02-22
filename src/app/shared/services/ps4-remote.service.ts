@@ -43,7 +43,6 @@ export class Ps4RemoteService {
       type: 'direct',
       packages: urls,
     }).pipe(
-      map(response => response.status === 'success'),
       timeout(5000),
     );
   }

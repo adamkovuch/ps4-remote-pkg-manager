@@ -16,6 +16,7 @@ import { HomeDataListService } from './home-data-list/home-data-list.service';
 import convertSize from "convert-size";
 import { Torrent } from 'webtorrent';
 import { HttpServerService } from '../shared/services/http-server.service';
+import { Ps4PkgService } from '../shared/services/ps4-pkg.service';
 
 @Component({
   selector: 'app-home',
@@ -38,7 +39,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private electronService: ElectronService,
     private torrentService: TorrentService,
-    private httpServerService: HttpServerService) { }
+    private httpServerService: HttpServerService,
+    private ps4Pkg: Ps4PkgService) { }
 
 
   ngOnInit(): void {
@@ -169,14 +171,42 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.installPkgs([pkgTask.link]);
   }
 
+  pkgInfo(pkgTask: PkgTask) {
+    this.ps4Pkg.extract(pkgTask.filePath).then(result => {
+      const data: AppDialogData = {
+        okButton: 'OK',
+        title: 'Pkg info',
+        text: this.objToStrings(result),
+      };
+      this.dialog.open(ConfirmDialogComponent, {data});
+    }).catch(err => {
+      const data: AppDialogData = {
+        okButton: 'OK',
+        title: 'Pkg info',
+        text: `Invalid pkg`,
+      };
+      this.dialog.open(ConfirmDialogComponent, {data});
+    });
+  }
+
   private addFilesToList(files: File[]) {
     files.forEach(file => {
-      const result = this.fileHosting.addFile(file.path, file.name);
-      this.dataListService.add({
-        name: result.name,
-        source: PkgTaskSource.file,
-        link: result.link,
-        size: this.getSize(file.size),
+      this.ps4Pkg.extract(file.path).then(() => {
+        const result = this.fileHosting.addFile(file.path, file.name);
+        this.dataListService.add({
+          name: result.name,
+          source: PkgTaskSource.file,
+          link: result.link,
+          size: this.getSize(file.size),
+          filePath: file.path,
+        });
+      }).catch(() => {
+        const data: AppDialogData = {
+          text: `Invalid pkg file ${file.path}`,
+          title: 'Add file',
+          okButton: 'OK',
+        };
+        this.dialog.open(ConfirmDialogComponent, {data});
       });
     });
   }
@@ -243,19 +273,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.loading$.next(true);
     this.ps4RemoteService.install(urls).pipe(
       finalize(() => this.loading$.next(false)),
-      catchError(() => of(null)),
+      catchError((err) => of({error: err})),
       takeUntil(this.destroyed$),
     ).subscribe(result => {
       let data: AppDialogData;
-      if (result) {
+      if (result?.status === 'success') {
         data = {
           text: "The package has been sent successfully",
           title: "Send to PS4",
           okButton: "OK",
         };
       } else {
+        const error = result?.error || result;
         data = {
-          text: "Error sending the package",
+          text: `Error sending the package\n${error}`,
           title: "Send to PS4",
           okButton: "OK",
         };
@@ -263,5 +294,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       this.dialog.open(ConfirmDialogComponent, { data });
     });
+  }
+
+  private objToStrings(obj: any) {
+    let result = '';
+    for(let i in obj) {
+      result += `${i}: ${obj[i]}\n`;
+    }
+    return result;
   }
 }

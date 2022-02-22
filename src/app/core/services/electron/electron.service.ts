@@ -12,6 +12,7 @@ import * as os from 'os';
 import * as parseTorrent from 'parse-torrent';
 import * as pump from 'pump';
 import * as rangeParser from 'range-parser';
+import * as ReadStream from "fs-readstream-seek";
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,7 @@ export class ElectronService {
   shell: typeof shell;
   dialog: typeof dialog;
   parseTorrent: typeof parseTorrent;
+  readStream: typeof ReadStream;
 
   mime: any;
   pump: typeof pump;
@@ -56,6 +58,7 @@ export class ElectronService {
       this.mime = window.require('mime');
       this.pump = window.require('pump');
       this.rangeParser = window.require('range-parser');
+      this.readStream = window.require('fs-readstream-seek');
 
       this.ipcRenderer.once('asynchronous-message', (evt, messageObj) => {
         this.appDataPath = messageObj.appDataPath;

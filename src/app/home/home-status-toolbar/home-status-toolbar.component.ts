@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { BehaviorSubject, finalize, Subject, takeUntil } from 'rxjs';
-import { ElectronService } from '../../core/services';
-import { SettingsComponent } from '../../settings/settings.component';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { AppDialogData } from '../../shared/components/input-dialog/input-dialog.component';
 import { Ps4RemoteService } from '../../shared/services/ps4-remote.service';
 
 @Component({
@@ -21,7 +21,7 @@ export class HomeStatusToolbarComponent implements OnInit, OnDestroy {
   constructor(
     private ps4Service: Ps4RemoteService,
     private router: Router,
-    private electronService: ElectronService) { 
+    private dialog: MatDialog) { 
   }
 
   ngOnDestroy(): void {
@@ -44,9 +44,13 @@ export class HomeStatusToolbarComponent implements OnInit, OnDestroy {
       finalize(() => this.checkingConnection$.next(false)),
       takeUntil(this.destroyed$),
     ).subscribe(result => {
-      this.electronService.dialog.showMessageBox(this.electronService.browserWindow, {
+      const data: AppDialogData = {
         title: 'Test connection',
-        message: result ? 'Connection OK' : 'Connection failed'
+        text: result ? 'Connection OK' : 'Connection failed',
+        okButton: 'OK'
+      };
+      this.dialog.open(ConfirmDialogComponent, {
+        data
       });
     });
   }

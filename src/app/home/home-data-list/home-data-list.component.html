@@ -9,6 +9,7 @@
       <td mat-cell class="menu" *matCellDef="let element">
         <mat-icon [matMenuTriggerFor]="menu">more_vert</mat-icon>
         <mat-menu #menu="matMenu">
+          <button *ngIf="element.filePath" mat-menu-item (click)="pkgInfo.emit(element)">Pkg info</button>
           <button mat-menu-item (click)="openLink.emit(element.link)">Test Download</button>
           <button mat-menu-item (click)="delete.emit(element)">Delete</button>
           <button *ngIf="element.torrentData" mat-menu-item (click)="forceDownload.emit(element)">Force Download</button>
