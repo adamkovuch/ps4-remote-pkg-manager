@@ -11,9 +11,9 @@ const args = process.argv.slice(1),
 function createWindow(): BrowserWindow {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 670,
+    width: 800,
     height: 600,
-    minWidth: 670,
+    minWidth: 800,
     minHeight: 600,
     webPreferences: {
       nodeIntegration: true,

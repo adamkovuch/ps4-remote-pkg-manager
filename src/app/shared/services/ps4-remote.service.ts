@@ -27,7 +27,10 @@ export class Ps4RemoteService {
     this.connected$.next(false);
   }
 
-  ping(ip: string) {
+  ping(ip?: string) {
+    if(!ip) {
+      ip = this._ip;
+    }
     return this.http.post(`http://${ip}:12800/api/is_exists`, {title_id: 'CUSA09311' }).pipe(
       map(() => true),
       timeout(5000),

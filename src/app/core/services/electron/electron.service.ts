@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 // If you import a module but never use any of the imported values other than as TypeScript types,
 // the resulting javascript file will look as if you never imported the module at all.
-import { ipcRenderer, webFrame, shell, dialog, App, BrowserWindow } from 'electron';
+import { ipcRenderer, webFrame, shell, dialog, BrowserWindow } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as webtorrent from 'webtorrent';
@@ -18,7 +18,7 @@ import * as rangeParser from 'range-parser';
 })
 export class ElectronService {
   appDataPath: string;
-
+  browserWindow: BrowserWindow;
   ipcRenderer: typeof ipcRenderer;
   webFrame: typeof webFrame;
   childProcess: typeof childProcess;
@@ -48,6 +48,7 @@ export class ElectronService {
       this.http = window.require('http');
       this.os = window.require('os');
       this.dialog = window.require('@electron/remote').dialog;
+      this.browserWindow = window.require('@electron/remote').getCurrentWindow();
 
       this.parseTorrent = window.require('parse-torrent');
       this.webTorrentLib = window.require('webtorrent');

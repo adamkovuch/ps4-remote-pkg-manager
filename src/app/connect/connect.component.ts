@@ -59,24 +59,12 @@ export class ConnectComponent implements OnInit, OnDestroy, AfterViewInit {
 
   submit() {
     if(this.ipAddressControl.errors?.required || this.ipAddressControl.errors?.invalid) return;
-    this.loading$.next(true);
 
-    this.ps4RemoteService.ping(this.ipAddress).pipe(
-      finalize(() => {
-        this.loading$.next(false);
-      }),
-      takeUntil(this.destroyed$),
-    ).subscribe(result => {
-      if(result) {
-        this.ps4RemoteService.connect(this.ipAddress);
-        const settings = this.appSettingsService.settings;
-        settings.lastIp = this.ipAddress;
-        this.appSettingsService.setSettings(settings);
-        this.redirectIfConnected();
-      } else {
-        this.ipAddressControl.setErrors({notConnected: true});
-      }
-    })
+    this.ps4RemoteService.connect(this.ipAddress);
+    const settings = this.appSettingsService.settings;
+    settings.lastIp = this.ipAddress;
+    this.appSettingsService.setSettings(settings);
+    this.redirectIfConnected();
   }
 
   openSettings() {
