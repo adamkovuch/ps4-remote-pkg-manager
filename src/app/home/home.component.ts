@@ -284,7 +284,10 @@ export class HomeComponent implements OnInit, OnDestroy {
           okButton: "OK",
         };
       } else {
-        const error = result?.error || result;
+        let error = result?.error || result;
+        if(typeof error === 'object') {
+          error = JSON.stringify(error);
+        }
         data = {
           text: `Error sending the package\n${error}`,
           title: "Send to PS4",
